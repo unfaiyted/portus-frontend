@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import IconLogo from '$lib/components/icons/IconLogo.svelte';
 	import IconDown from '$lib/components/icons/IconDown.svelte';
 	import IconUp from '$lib/components/icons/IconUp.svelte';
 	import { fade } from 'svelte/transition';
+	import { shortensStore, shortensLoading } from '$lib/stores/shortens';
+	import { ApiError } from '$lib/api/errors';
+	import IconTriangle from '$lib/components/icons/IconTriangle.svelte';
 
 	let longUrl = '';
 	let shortUrl = '';
@@ -13,7 +16,8 @@
 	let error = '';
 	let customSectionExpanded = false; // Track whether custom section is expanded
 	// Mock database of already taken shortcodes
-	let takenShortCodes = ['premium', 'admin', 'test123'];
+	// let takenShortCodes = ['premium', 'admin', 'test123'];
+	$: isLoading = $shortensLoading;
 
 	async function handleSubmit() {
 		if (!longUrl) {
@@ -22,32 +26,38 @@
 		}
 
 		error = '';
-		isLoading = true;
 
 		try {
-			// This is where you would integrate with your backend API
-			// For demonstration, we're simulating a response
-			await new Promise((resolve) => setTimeout(resolve, 800));
+			// Use the API to create or fetch the shortened URL
+			const result = await shortensStore.fetchOrCreate(longUrl, customShortCode || undefined);
 
-			// Check if custom shortcode is provided and available
-			if (customShortCode) {
-				if (takenShortCodes.includes(customShortCode)) {
-					error = 'This shortcode is already taken. Please try another.';
-					isLoading = false;
-					return;
-				}
-				shortUrl = `prt.ad/${customShortCode}`;
+			if (result && result.shorten) {
+				// Construct the full shortened URL with the returned shortcode
+				shortUrl = `prt.ad/${result.shorten.shortCode}`;
+
+				// Clear inputs after successful submission
+				longUrl = '';
+				customShortCode = '';
 			} else {
-				// Generate random shortcode if no custom one provided
-				shortUrl = `prt.ad/${Math.random().toString(36).substring(2, 8)}`;
+				error = 'Failed to create short URL. Please try again.';
 			}
-
-			longUrl = '';
-			customShortCode = '';
 		} catch (err) {
-			error = 'Failed to create short URL. Please try again.';
-		} finally {
-			isLoading = false;
+			console.log(err, err instanceof ApiError);
+			if (err instanceof ApiError) {
+				console.log('is api error');
+				console.log('err.message', err.message);
+				error = (err.details.error as string) || 'API Error occurred';
+
+				// Handle specific error types
+				if (err.type === 'CONFLICT') {
+					error = 'This custom shortcode is already taken. Please try another.';
+				} else if (err.type === 'VALIDATION_ERROR') {
+					error = 'Invalid URL or shortcode format. Please check your input.';
+				}
+			} else {
+				error = 'Failed to create short URL. Please try again.';
+				console.error(err);
+			}
 		}
 	}
 
@@ -68,18 +78,18 @@
 	<header class="mb-12 text-center">
 		<h1 class="h1 text-primary-500 mb-2 font-bold">A Shorter Trip</h1>
 		<p class="preset-typo-subtitle mb-6 text-lg">
-			Teleport your lengthy URLs to concise, memorable destinations
+			Transform your lengthy URLs to concise, memorable destinations
 		</p>
 	</header>
 
 	<!-- URL Shortener Form -->
 	<div class="card preset-filled-surface-100-900 relative mb-10 p-6 shadow-xl backdrop-blur-sm">
 		<!-- Icon in top right corner -->
-		<div class="pointer-events-none absolute -top-0 -right-0 h-24 w-24 opacity-80">
+		<div class="pointer-events-none absolute -top-0 -right-0 h-24 w-24 opacity-0 sm:opacity-80">
 			<IconLogo />
 		</div>
 		<div class="card-header">
-			<h3 class="h3 font-bold">Teleport Your URL</h3>
+			<h3 class="h3 font-bold">Transform Your URL</h3>
 			<p class="preset-typo-cation">
 				Enter your long URL below and we'll instantly port it to a shorter dimension
 			</p>
@@ -87,7 +97,19 @@
 		<div class="card-body py-4">
 			{#if error}
 				<div class="alert alert-error mb-4" transition:fade>
-					<span>{error}</span>
+					<div
+						class="card preset-outlined-error-500 grid grid-cols-1 items-center gap-4 p-4 lg:grid-cols-[auto_1fr_auto]"
+						transition:fade
+					>
+						<IconTriangle />
+						<div>
+							<p class="font-bold">Error</p>
+							<p class="text-xs opacity-60">{error}</p>
+						</div>
+						<div class="flex gap-1">
+							<!-- <button class="btn preset-tonal hover:preset-filled">Dismiss</button> -->
+						</div>
+					</div>
 				</div>
 			{/if}
 
@@ -96,7 +118,7 @@
 					<span class="label-text">Long URL</span>
 					<input
 						type="url"
-						class="input"
+						class="input !bg-surface-200-800"
 						placeholder="https://example.com/very/long/url/that/needs/teleporting"
 						bind:value={longUrl}
 						required
@@ -122,7 +144,7 @@
 								<span class="label-text text-sm">prt.ad/</span>
 								<input
 									type="text"
-									class="input mb-4"
+									class="input !bg-surface-200-800 mb-4"
 									placeholder="e.g., myproduct"
 									bind:value={customShortCode}
 									pattern="[a-zA-Z0-9-_]+"
@@ -160,9 +182,9 @@
 				>
 					<div class="flex items-center justify-between">
 						<div>
-							<p class="mb-1 text-sm font-semibold text-gray-700">Your teleported URL:</p>
+							<p class="mb-1 text-sm font-semibold">Your Portus URL:</p>
 							<a
-								href={shortUrl}
+								href={'https://' + shortUrl}
 								class="text-primary-700 text-lg font-bold hover:underline"
 								target="_blank"
 							>
@@ -190,7 +212,7 @@
 				<h3 class="h4 font-bold">Instant Transport</h3>
 			</div>
 			<div class="card-body">
-				<p class="">Teleport your links to their shorter form within milliseconds.</p>
+				<p class="">Transform your links to their shorter form within milliseconds.</p>
 			</div>
 		</div>
 
