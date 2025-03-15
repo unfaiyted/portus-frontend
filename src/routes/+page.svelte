@@ -16,7 +16,7 @@
 	let copied = false;
 	let error = '';
 	let customSectionExpanded = false; // Track whether custom section is expanded
-	let domain = PORTUS_API_BASE_URL.split('//')[1];
+	let domain = PORTUS_API_BASE_URL.split('//')[1].split('/')[0];
 	// Mock database of already taken shortcodes
 	// let takenShortCodes = ['premium', 'admin', 'test123'];
 	$: isLoading = $shortensLoading;
