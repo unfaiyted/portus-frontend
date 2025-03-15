@@ -2,14 +2,12 @@
 FROM oven/bun:1 as builder
 
 # Define build arguments for environment variables
-ARG VITE_API_URL
 # ARG VITE_API_KEY
-ARG VITE_SHORTEN_API_BASE_URL
+ARG VITE_API_BASE_URL
 
 # Set environment variables during the build process
-ENV VITE_API_URL=$VITE_API_URL
 # ENV VITE_API_KEY=$VITE_API_KEY
-ENV VITE_SHORTEN_API_BASE_URL=$VITE_SHORTEN_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 WORKDIR /app
 
