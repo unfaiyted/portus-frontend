@@ -5,6 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import { shortensStore, shortensLoading } from '$lib/stores/shortens';
 	import { ApiError } from '$lib/api/errors';
+	import { PORTUS_API_BASE_URL } from '$lib/api/client';
 	import { ModelsErrorType as ErrorType } from '$lib/api/portus.v1.d';
 	import IconTriangle from '$lib/components/icons/IconTriangle.svelte';
 
@@ -15,6 +16,7 @@
 	let copied = false;
 	let error = '';
 	let customSectionExpanded = false; // Track whether custom section is expanded
+	let domain = PORTUS_API_BASE_URL.split('//')[1];
 	// Mock database of already taken shortcodes
 	// let takenShortCodes = ['premium', 'admin', 'test123'];
 	$: isLoading = $shortensLoading;
@@ -33,7 +35,7 @@
 
 			if (result && result.shorten) {
 				// Construct the full shortened URL with the returned shortcode
-				shortUrl = `prt.ad/${result.shorten.shortCode}`;
+				shortUrl = result.shortUrl || 'Error producing short url';
 
 				// Clear inputs after successful submission
 				longUrl = '';
@@ -139,7 +141,7 @@
 					{#if customSectionExpanded}
 						<div transition:fade={{ duration: 150 }} class="mt-2">
 							<div class="mt-2 flex items-center gap-2">
-								<span class="label-text text-sm">prt.ad/</span>
+								<span class="label-text text-sm">{domain}/</span>
 								<input
 									type="text"
 									class="input !bg-surface-200-800 mb-4"
@@ -182,7 +184,7 @@
 						<div>
 							<p class="mb-1 text-sm font-semibold">Your Portus URL:</p>
 							<a
-								href={'https://' + shortUrl}
+								href={shortUrl}
 								class="text-primary-700 text-lg font-bold hover:underline"
 								target="_blank"
 							>
