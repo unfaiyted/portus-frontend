@@ -14,11 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"test:e2e": "playwright test",
 		"test": "npm run test:e2e && npm run test:unit -- --run",
-		"test:unit": "vitest",
-		"db:start": "docker compose up",
-		"db:push": "drizzle-kit push",
-		"db:migrate": "drizzle-kit migrate",
-		"db:studio": "drizzle-kit studio"
+		"test:unit": "vitest"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -34,7 +30,6 @@
 		"@tailwindcss/vite": "^4.0.14",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
-		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -54,12 +49,6 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@inlang/paraglide-sveltekit": "^0.15.5",
-		"@node-rs/argon2": "^2.0.2",
-		"@oslojs/crypto": "^1.0.1",
-		"@oslojs/encoding": "^1.1.0",
-		"drizzle-orm": "^0.40.0",
-		"openapi-fetch": "^0.13.5",
-		"postgres": "^3.4.5"
+		"openapi-fetch": "^0.13.5"
 	}
 }
