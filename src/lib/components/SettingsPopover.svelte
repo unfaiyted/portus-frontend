@@ -94,7 +94,7 @@
 	{#snippet content()}
 		<header class="flex justify-between">
 			<p class="text-xl font-bold">Settings</p>
-			<button class="btn-icon hover:preset-tonal" on:click={popoverClose}><IconUp /></button>
+			<button class="btn-icon hover:preset-tonal" onclick={popoverClose}><IconUp /></button>
 		</header>
 		<article class="space-y-4">
 			<!-- Theme Toggle -->
@@ -218,48 +218,48 @@
 
 <style>
 	/* Toggle switch styling */
-	.toggle {
-		position: relative;
-		display: inline-block;
-		width: 48px;
-		height: 24px;
-	}
-
-	.toggle input {
-		opacity: 0;
-		width: 0;
-		height: 0;
-	}
-
-	.toggle-slider {
-		position: absolute;
-		cursor: pointer;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: var(--color-surface-400);
-		transition: 0.4s;
-		border-radius: 34px;
-	}
-
-	.toggle-slider:before {
-		position: absolute;
-		content: '';
-		height: 16px;
-		width: 16px;
-		left: 4px;
-		bottom: 4px;
-		background-color: white;
-		transition: 0.4s;
-		border-radius: 50%;
-	}
-
-	input:checked + .toggle-slider {
-		background-color: var(--color-primary-500);
-	}
-
-	input:checked + .toggle-slider:before {
-		transform: translateX(24px);
-	}
+	/* .toggle { */
+	/* 	position: relative; */
+	/* 	display: inline-block; */
+	/* 	width: 48px; */
+	/* 	height: 24px; */
+	/* } */
+	/**/
+	/* .toggle input { */
+	/* 	opacity: 0; */
+	/* 	width: 0; */
+	/* 	height: 0; */
+	/* } */
+	/**/
+	/* .toggle-slider { */
+	/* 	position: absolute; */
+	/* 	cursor: pointer; */
+	/* 	top: 0; */
+	/* 	left: 0; */
+	/* 	right: 0; */
+	/* 	bottom: 0; */
+	/* 	background-color: var(--color-surface-400); */
+	/* 	transition: 0.4s; */
+	/* 	border-radius: 34px; */
+	/* } */
+	/**/
+	/* .toggle-slider:before { */
+	/* 	position: absolute; */
+	/* 	content: ''; */
+	/* 	height: 16px; */
+	/* 	width: 16px; */
+	/* 	left: 4px; */
+	/* 	bottom: 4px; */
+	/* 	background-color: white; */
+	/* 	transition: 0.4s; */
+	/* 	border-radius: 50%; */
+	/* } */
+	/**/
+	/* input:checked + .toggle-slider { */
+	/* 	background-color: var(--color-primary-500); */
+	/* } */
+	/**/
+	/* input:checked + .toggle-slider:before { */
+	/* 	transform: translateX(24px); */
+	/* } */
 </style>

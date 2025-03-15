@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import createClient from 'openapi-fetch';
 import type { paths } from '$lib/api/portus.v1';
-import type { ErrorResponse } from '$lib/api/types';
+import type { ShortenErrorResponse as ErrorResponse } from '$lib/api/types';
 
 // Base API configuration
 export const baseUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080') + '/api/v1';
@@ -11,7 +11,7 @@ export const client = createClient<paths>({ baseUrl });
 export function handleApiError(err: unknown): ErrorResponse {
 	return {
 		message: err instanceof Error ? err.message : 'Unknown error',
-		error: err instanceof Error ? 'INTERNAL_ERROR' : 'INTERNAL_ERROR'
+		type: err instanceof Error ? 'INTERNAL_ERROR' : 'INTERNAL_ERROR'
 	};
 }
 

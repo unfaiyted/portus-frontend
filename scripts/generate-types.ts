@@ -25,7 +25,7 @@ interface ApiConfig {
 // API configurations from environment variables
 const API_CONFIGS = [
 	{
-		envVar: 'VITE_SHORTEN_API_BASE_URL',
+		envVar: 'VITE_API_BASE_URL',
 		name: 'portus',
 		version: 'v1',
 		outputFile: 'portus.v1.d.ts'
@@ -80,7 +80,7 @@ async function generateTypesForApi(config: ApiConfig) {
 
 		console.log(`Generating TypeScript types for ${config.name}...`);
 		const { stdout, stderr } = await execAsync(
-			`npx openapi-typescript ${tempPath} --output ${config.outputPath}`
+			`npx openapi-typescript ${tempPath}  --enum --enum-values --output ${config.outputPath}`
 		);
 
 		if (stdout) console.log(stdout);

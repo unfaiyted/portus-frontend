@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import IconLogo from '$lib/components/icons/IconLogo.svelte';
 	import IconDown from '$lib/components/icons/IconDown.svelte';
 	import IconUp from '$lib/components/icons/IconUp.svelte';
 	import { fade } from 'svelte/transition';
 	import { shortensStore, shortensLoading } from '$lib/stores/shortens';
 	import { ApiError } from '$lib/api/errors';
+	import { ModelsErrorType as ErrorType } from '$lib/api/portus.v1.d';
 	import IconTriangle from '$lib/components/icons/IconTriangle.svelte';
 
 	let longUrl = '';
@@ -42,16 +42,14 @@
 				error = 'Failed to create short URL. Please try again.';
 			}
 		} catch (err) {
-			console.log(err, err instanceof ApiError);
 			if (err instanceof ApiError) {
-				console.log('is api error');
 				console.log('err.message', err.message);
-				error = (err.details.error as string) || 'API Error occurred';
+				error = err.message || 'API Error occurred';
 
 				// Handle specific error types
-				if (err.type === 'CONFLICT') {
+				if (err.type === ErrorType.ErrorTypeServiceUnavailable) {
 					error = 'This custom shortcode is already taken. Please try another.';
-				} else if (err.type === 'VALIDATION_ERROR') {
+				} else if (err.type === ErrorType.ErrorTypeBadRequest) {
 					error = 'Invalid URL or shortcode format. Please check your input.';
 				}
 			} else {
